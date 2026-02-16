@@ -356,3 +356,9 @@ background: linear-gradient(135deg, #06b6d4, #2563eb) !important;
 .dt-length label{
     margin-left: 10px !important;
 }
+.select2-container .select2-selection--single{
+    height: 38px !important;
+}
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+    line-height: 38px !important;
+}

@@ -36,35 +36,34 @@ class CustomerController extends Controller
     {
         $validated = $request->validated();
 
-        try{
+        try {
             DB::beginTransaction();
 
             $addressParts = [
-            $validated['addressline1'] ?? null,
-            $validated['addressline2'] ?? null,
-            $validated['addressline3'] ?? null,
-            $validated['suburb'] ?? null,
-            $validated['state'] ?? null,
-            $validated['postalcode'] ?? null,
-        ];
+                $validated['addressline1'] ?? null,
+                $validated['addressline2'] ?? null,
+                $validated['addressline3'] ?? null,
+            ];
 
-        $address = collect($addressParts)
-            ->map(fn ($v) => is_string($v) ? trim($v) : $v)
-            ->filter()
-            ->implode(', ');
+            $address = collect($addressParts)
+                ->map(fn($v) => is_string($v) ? trim($v) : $v)
+                ->filter()
+                ->implode(', ');
 
             $customer = new Customer();
             $customer->name = $validated['name'];
             $customer->phone = $validated['phone'];
             $customer->status = $validated['status'];
-            $customer->address = $address; 
+            $customer->address = $address;
+            $customer->suburb = $validated['suburb'];
+            $customer->state = $validated['state'];
+            $customer->postalcode = $validated['postalcode'];
             $customer->save();
 
             DB::commit();
 
             return redirect()->route('customers.index')->with('success', 'Customer created successfully.');
-
-        }catch (Exception $ex) {
+        } catch (Exception $ex) {
             dd($ex);
             DB::rollback();
             return abort(500);

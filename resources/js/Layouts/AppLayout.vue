@@ -32,7 +32,9 @@
                             </Link>
                         </div>
                         <div class="nav-item text-black px-2 mb-3">
-                            <Link href="" class="nav-link p-2">
+                            <Link :href="route('sales.create')" class="nav-link p-2" v-bind:class="{
+                                active: addActiveClass(['sales.create']),
+                            }">
                             <i class="fa-solid fa-tags"></i>
                             Sales Orders
                             </Link>

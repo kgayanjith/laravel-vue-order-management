@@ -1,7 +1,7 @@
 <template>
     <div :class="class">
         <label :for="id" class="form-lable mb-2">{{ label }} <sup v-if="isRequired">*</sup> </label>
-        <textarea :name="name" :id="id" v-model="model" :disabled="disabled" :required="isRequired" class="form-control" rows="3"></textarea>
+        <textarea :name="name" :id="id" v-model="model" :disabled="disabled" :required="isRequired" class="form-control" :rows="rows"></textarea>
         <div class="text-danger">
             {{ error }}
         </div>
@@ -36,6 +36,14 @@ export default {
             default: false,
         },
         modelValue: {
+            default: "",
+        },
+        rows: {
+            type: String,
+            default: 3,
+        },
+        name: {
+            type: String,
             default: "",
         },
     },

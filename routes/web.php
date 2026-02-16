@@ -3,6 +3,7 @@
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\SaleController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -18,7 +19,7 @@ Route::get('/', function () {
 
 Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified',])->group(function () {
 
-    Route::get('/home', [HomeController::class, 'index'])->name('home');
+    Route::get('/home', [SaleController::class, 'index'])->name('home');
 
     // Products Routes
     Route::prefix('products')->group(function () {
@@ -32,5 +33,11 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified',
         Route::get('/', [CustomerController::class, 'index'])->name('customers.index');
         Route::get('/create', [CustomerController::class, 'create'])->name('customers.create');
         Route::post('/store', [CustomerController::class, 'store'])->name('customers.store');
+    });
+
+    // Sales Routes
+    Route::prefix('sales')->group(function () {
+        Route::get('/create', [SaleController::class, 'create'])->name('sales.create');
+        Route::post('/store', [SaleController::class, 'store'])->name('sales.store');
     });
 });

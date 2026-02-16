@@ -2,7 +2,7 @@
     <AppLayout>
         <Link class="btn btn-primary py-1 px-5" :href="route('customers.create')">Create</Link>
         <div class="table-responsive mt-3">
-            <table class="table" id="productsTable">
+            <table class="table" id="customersTable">
                 <thead class="">
                     <tr class="text-center">
                         <th class="fw-bold" scope="col">ID</th>
@@ -47,7 +47,7 @@ export default {
     },
     mounted() {
         $(document).ready(function () {
-            $('#productsTable').DataTable();
+            $('#customersTable').DataTable();
         });
     }
 

@@ -4,8 +4,8 @@
             <div class="row">
                 <InputComponent id="name" label="Product Name" v-model="form.name" :error="form.errors.name"
                     :isRequired="true" />
-                <InputComponent id="price" placeholder="ex:750.00" label="Product Price" v-model="form.price" :error="form.errors.price"
-                    :isRequired="true" />
+                <InputComponent id="price" placeholder="ex:750.00" label="Product Price" v-model="form.price"
+                    :error="form.errors.price" :isRequired="true" />
                 <TextAreaComponent id="description" label="Description" v-model="form.description"
                     :error="form.errors.description" :isRequired="true" />
                 <StatusComponent id="status" label="Status" v-model="form.status" :error="form.errors.status"
@@ -23,6 +23,7 @@
 
 <script>
 import InputComponent from '@/Components/InputComponent.vue';
+import SelectComponent from '@/Components/SelectComponent.vue';
 import StatusComponent from '@/Components/StatusComponent.vue';
 import TextAreaComponent from '@/Components/TextAreaComponent.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
@@ -36,7 +37,7 @@ export default {
         InputComponent,
         TextAreaComponent,
         StatusComponent,
-        Link
+        Link,
     },
     data() {
         return {
@@ -49,21 +50,10 @@ export default {
             })
         }
     },
-    watch: {
-        'form.name'(value) {
-            this.form.slug = this.slugify(value);
-        }
+    mounted() {
+       
     },
     methods: {
-        slugify(text) {
-            return text
-                .toString()
-                .toLowerCase()
-                .trim()
-                .replace(/\s+/g, '-')
-                .replace(/[^\w\-]+/g, '')
-                .replace(/\-\-+/g, '-');
-        },
         submit() {
             this.form.post(route('products.store'), {
                 onSuccess: () => {
