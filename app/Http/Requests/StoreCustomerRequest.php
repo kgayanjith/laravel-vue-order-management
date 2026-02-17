@@ -24,7 +24,7 @@ class StoreCustomerRequest extends FormRequest
         return [
             
         'name' => ['required','string','max:255'],
-        'phone' => ['required','string','max:50'],
+        'phone' => ['required','string','max:10'],
         'status' => ['nullable','boolean'],
         'addressline1' => ['required','string'],
         'addressline2' => ['nullable','string'],
