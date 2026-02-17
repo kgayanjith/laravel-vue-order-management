@@ -1,4 +1,4 @@
-# 🚀 Laravel Jetstream Application
+# 🚀 Laravel + Vue Order Management Application
 
 A full-stack web application built with **Laravel** and **Vue.js**, featuring authentication via **Laravel Jetstream**.
 
