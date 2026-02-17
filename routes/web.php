@@ -39,5 +39,7 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified',
     Route::prefix('sales')->group(function () {
         Route::get('/create', [SaleController::class, 'create'])->name('sales.create');
         Route::post('/store', [SaleController::class, 'store'])->name('sales.store');
+        Route::get('/edit/{id}', [SaleController::class, 'edit'])->name('sales.edit');
+        Route::post('/update', [SaleController::class, 'update'])->name('sales.update');
     });
 });

@@ -25,6 +25,7 @@
                     <InputComponent class="col-md-12 mb-3" id="address1" label="Reference No"
                         v-model="form.order.referenceNo" />
                     <TextAreaComponent class="col-md-12" id="note" rows="5" label="Note" v-model="form.order.note" />
+
                 </div>
 
             </div>
@@ -61,16 +62,16 @@
                                     :isRequired="false" />
                             </td>
                             <td>
-                                <InputComponent class="col-md-12 mb-3" id="address3"  @input="taxCalulate" v-model="form.order.quantity"
-                                    :isRequired="false" />
+                                <InputComponent class="col-md-12 mb-3" id="address3" @input="taxCalulate"
+                                    v-model="form.order.quantity" :isRequired="false" />
                             </td>
                             <td>
                                 <InputComponent class="col-md-12 mb-3" id="price" v-model="form.order.price"
-                                    :isRequired="false" />
+                                    :isRequired="false" disabled />
                             </td>
                             <td>
-                                <InputComponent class="col-md-12 mb-3" id="address3" @input="taxCalulate" v-model="form.order.tax"
-                                    :isRequired="false" placeholder="ex:10%" />
+                                <InputComponent class="col-md-12 mb-3" id="address3" @input="taxCalulate"
+                                    v-model="form.order.tax" :isRequired="false" placeholder="ex:10%" />
                             </td>
                             <td>
                                 <InputComponent class="col-md-12 mb-3" id="address3" v-model="form.order.excl_amount"
@@ -92,7 +93,7 @@
             <div class="mt-5">
                 <Link class="btn btn-outline-danger py-1 px-5" :href="route('home')">Cancel</Link>
                 <button type="submit" class="btn btn-primary ms-2 py-1 px-5" :disabled="form.processing">
-                    Create Product
+                    {{ sales ? 'Update' : 'Create Sale' }}
                 </button>
             </div>
         </form>
@@ -119,7 +120,8 @@ export default {
     },
     props: {
         customers: Array,
-        products: Array
+        products: Array,
+        sales: Array,
     },
     data() {
         return {
@@ -134,6 +136,7 @@ export default {
                 status: 1,
 
                 order: {
+                    id: '',
                     customer_id: '',
                     invoiceNo: '',
                     invoiceDate: '',
@@ -176,18 +179,64 @@ export default {
         },
         'form.order.product_id'(id) {
             const p = this.products.find(x => String(x.id) === String(id));
-            
+
             this.form.order.product_description = p?.description ?? '';
             this.form.order.price = p?.price ?? '';
+
+            this.taxCalulate();
+
         },
 
-        'form.order.quantity'(quantity) {
-             
-            this.taxCalulate();   
-        }
+        'form.order.quantity'() {
+
+            this.taxCalulate();
+        },
+        'form.order.tax'() {
+            this.taxCalulate();
+        },
+
+
 
     },
     mounted() {
+        let self = this;
+
+        if (this.sales) {
+            const c = this.sales.customer;
+
+            const parts = (c.address ?? '').split(',').map(s => s.trim());
+
+            this.form.addressline1 = parts[0] ?? '';
+            this.form.addressline2 = parts[1] ?? '';
+            this.form.addressline3 = parts[2] ?? '';
+
+            this.form.suburb = c.suburb;
+            this.form.state = c.state;
+            this.form.postalcode = c.postalcode;
+            this.form.status = c.status;
+
+            this.form.order.id = this.sales.id;
+            this.form.order.customer_id = this.sales.customer_id;
+            this.form.order.invoiceNo = this.sales.invoiceNo;
+            this.form.order.invoiceDate = this.sales.invoiceDate;
+            this.form.order.referenceNo = this.sales.referenceNo;
+            this.form.order.note = this.sales.note;
+
+
+            const item = this.sales.items?.[0];
+
+            if (item) {
+
+                this.form.order.product_id = item.product_id;
+                this.form.order.product_note = item.note;
+                this.form.order.quantity = item.quantity;
+                this.form.order.tax = item.tax_rate;
+                this.form.order.price = item.price;
+                this.form.order.excl_amount = item.excl_amount;
+                this.form.order.tax_amount = item.tax_amount;
+                this.form.order.incl_amount = item.incl_amount;
+            }
+        }
     },
     methods: {
         taxCalulate() {
@@ -205,16 +254,20 @@ export default {
             this.form.order.incl_amount = inclAmount.toFixed(2);
         },
         submit() {
-            this.form.post(route('sales.store'), {
-                onSuccess: () => {
-                    this.form.reset();
-                    alert('Order created successfully!');
-                },
-                onError: () => {
-                    alert('There were errors while creating the product.');
-                    console.log(this.form.errors);
-                }
-            });
+            this.form.post(
+                this.sales ? route('sales.update', this.sales.id)
+                    : route('sales.store'),
+
+                {
+                    onSuccess: () => {
+                        this.form.reset();
+                        alert(this.sales ? 'Sale updated successfully!' : 'Sale created successfully!');
+                    },
+                    onError: () => {
+                        alert(this.sales ? 'There were errors while updating the sale.' : 'There were errors while creating the sale.');
+                        console.log(this.form.errors);
+                    }
+                });
         },
 
     }

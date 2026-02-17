@@ -17,9 +17,9 @@ class SaleController extends Controller
      */
     public function index()
     {
-        $sales = Sale::with(['customer', 'items.product'])->latest()->get();
-        dd($sales);
-        return Inertia::render('Home/Index');
+        $sales = Sale::with(['customer', 'items.product'])->where('status', 1)->latest()->get();
+        // dd($sales);
+        return Inertia::render('Home/Index', ['sales' => $sales]);
     }
 
     /**
@@ -64,7 +64,7 @@ class SaleController extends Controller
 
             $sale->items()->create([
                 'product_id' => $product->id,
-                'note' => $v['order']['product_note'] ?? null,
+                'note' => $validated['order']['product_note'] ?? null,
                 'quantity' => $qty,
                 'tax_rate' => $taxRate,
                 'price' => $price,
@@ -94,17 +94,65 @@ class SaleController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Sale $sale)
+    public function edit($id)
     {
-        //
+        // dd($id);
+        $customers = Customer::where('status', 1)->get();
+        $products = Product::where('status', 1)->get();
+        $sales = Sale::with(['customer', 'items.product'])->where('id', $id)->first();
+        return Inertia::render('Sales/CreateUpdate', ['customers' => $customers, 'products' => $products, 'sales' => $sales]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Sale $sale)
+    public function update(StoreSaleRequest $request, Sale $sale)
     {
-        //
+        $validated = $request->validated();
+
+        try {
+            DB::beginTransaction();
+
+            $sale = Sale::findOrFail($validated['order']['id']);
+            // dd($sale);
+            $sale->customer_id = $validated['order']['customer_id'];
+            $sale->invoiceNo    = $validated['order']['invoiceNo'];
+            $sale->invoiceDate  = $validated['order']['invoiceDate'];
+            $sale->referenceNo  = $validated['order']['referenceNo'] ?? null;
+            $sale->note         = $validated['order']['note'] ?? null;
+            $sale->save();
+
+            $product = Product::findOrFail($validated['order']['product_id']);
+
+            $qty   = $validated['order']['quantity'];
+            $taxRate  = $validated['order']['tax'] ?? 0;
+            $price  = $product->price;
+            $excl  = $qty * $price;
+            $taxAmount = $excl * $taxRate / 100;
+            $incl   = $excl + $taxAmount;
+
+            $sale->items()->updateOrCreate(
+                ['sale_id' => $sale->id],
+                [
+                    'product_id' => $product->id,
+                    'note'   => $validated['order']['product_note'] ?? null,
+                    'quantity'  => $qty,
+                    'tax_rate'  => $taxRate,
+                    'price' => $price,
+                    'excl_amount' => $excl,
+                    'tax_amount'  => $taxAmount,
+                    'incl_amount' => $incl,
+                ]
+            );
+
+            DB::commit();
+
+            return redirect()->route('home')->with('success', 'Sale updated successfully.');
+        } catch (\Exception $ex) {
+            dd($ex);
+            DB::rollback();
+            return abort(500);
+        }
     }
 
     /**

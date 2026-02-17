@@ -24,7 +24,9 @@
                                 {{ product.status == 1 ? 'Activated' : 'Deactivated' }}
                             </span>
                     </td>
-                    <td>action</td>
+                    <td>
+
+                    </td>
                 </tr>
             </tbody>
         </table>
