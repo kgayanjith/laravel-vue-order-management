@@ -38,7 +38,7 @@ Before getting started, ensure your environment meets the following requirements
 | PHP | 8.4+ |
 | Laravel | 12 |
 | Composer | 2.8.12 |
-| Node.js | 18+ |
+| Node.js | 22.19.0 |
 | NPM | 10.9.3 |
 | MySQL | 8.0+ |
 
