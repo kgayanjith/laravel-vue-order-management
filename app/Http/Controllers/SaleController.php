@@ -158,8 +158,22 @@ class SaleController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Sale $sale)
+    public function destroy(Request $request)
     {
-        //
+        // dd($request->all());
+        
+        // try {
+        //     DB::beginTransaction();
+
+        //     $sale->items()->delete();
+        //     $sale->delete();
+
+        //     DB::commit();
+
+        //     return redirect()->route('home')->with('success', 'Sale deleted successfully.');
+        // } catch (\Exception $ex) {
+        //     DB::rollBack();
+        //     return abort(500);
+        // }
     }
 }

@@ -1,8 +1,12 @@
 <template>
     <AppLayout>
+        <HeaderComponent title="Sales" :subtitle="sales ? 'Edit Sale Record' : 'Create Sale Record'" />
         <form @submit.prevent="submit">
             <div class="row">
                 <div class="col-md-6">
+                    <div class="side-bar-header">
+                        <p class="text-dark text-uppercase">Customer Details</p>
+                    </div>
                     <SelectComponent class="col-md-12" id="customer" label="Customer" :options="customers"
                         v-model="form.order.customer_id" :error="form.errors.customer" />
                     <InputComponent class="col-md-12 mb-3" id="address1" label="Address Line 1"
@@ -18,6 +22,9 @@
                         disabled />
                 </div>
                 <div class="col-md-6">
+                    <div class="side-bar-header">
+                        <p class="text-dark text-uppercase">Sale Details</p>
+                    </div>
                     <InputComponent class="col-md-12 mb-3" id="address1" label="Invoice No"
                         v-model="form.order.invoiceNo" />
                     <InputComponent class="col-md-12 mb-3" type="date" id="address1" label="Invoice Date"
@@ -29,8 +36,11 @@
                 </div>
 
             </div>
-
-            <div class="table-responsive mt-5">
+            <div class="mt-5">
+                <div class="side-bar-header">
+                <p class="text-dark text-uppercase">Products Details</p>
+            </div>
+            <div class="table-responsive">
                 <table class="table" id="productsTable">
                     <thead class="">
                         <tr class="text-center">
@@ -39,7 +49,7 @@
                             <th class="fw-bold" scope="col">Note</th>
                             <th class="fw-bold" scope="col">Quantity</th>
                             <th class="fw-bold" scope="col">Price</th>
-                            <th class="fw-bold" scope="col">Tax</th>
+                            <th class="fw-bold" scope="col">Tax %</th>
                             <th class="fw-bold" scope="col">Excl Amount</th>
                             <th class="fw-bold" scope="col">Tax Amount</th>
                             <th class="fw-bold" scope="col">Incl Amount</th>
@@ -70,26 +80,57 @@
                                     :isRequired="false" disabled />
                             </td>
                             <td>
-                                <InputComponent class="col-md-12 mb-3" id="address3" @input="taxCalulate"
-                                    v-model="form.order.tax" :isRequired="false" placeholder="ex:10%" />
+                                <InputComponent class="col-md-12 mb-3" id="tax" @input="taxCalulate"
+                                    v-model="form.order.tax" :isRequired="false" placeholder="ex:10" />
                             </td>
                             <td>
-                                <InputComponent class="col-md-12 mb-3" id="address3" v-model="form.order.excl_amount"
+                                <InputComponent class="col-md-12 mb-3" id="excl_amount" v-model="form.order.excl_amount"
                                     :isRequired="false" disabled />
                             </td>
                             <td>
-                                <InputComponent class="col-md-12 mb-3" id="address3" v-model="form.order.tax_amount"
+                                <InputComponent class="col-md-12 mb-3" id="tax_amount" v-model="form.order.tax_amount"
                                     :isRequired="false" disabled />
                             </td>
                             <td>
-                                <InputComponent class="col-md-12 mb-3" id="address3" v-model="form.order.incl_amount"
+                                <InputComponent class="col-md-12 mb-3" id="incl_amount" v-model="form.order.incl_amount"
                                     :isRequired="false" disabled />
                             </td>
                         </tr>
                     </tbody>
                 </table>
             </div>
+            <div class="row justify-content-end mt-4">
+                <div class="col-md-5">
+                    <div class="row align-items-center">
+                        <div class="col-5 mb-1">
+                            <label for="totalexcl" class="form-label">Total Excl</label>
 
+                        </div>
+                        <div class="col-7 mb-1 total-amount-wrapper">
+                            <input type="text" class="form-control" id="totalexcl" disabled
+                                :value="form.order.excl_amount" />
+                        </div>
+                        <div class="col-5 mb-1">
+                            <label for="totaltax" class="form-label">Total Tax</label>
+
+                        </div>
+                        <div class="col-7 mb-1 total-amount-wrapper">
+                            <input type="text" class="form-control" id="totaltax" disabled
+                                :value="form.order.tax_amount" />
+                        </div>
+                        <hr class="solid my-2" />
+                        <div class="col-5 mb-1">
+                            <label for="totalincl" class="form-label fw-bold">Total Incl</label>
+
+                        </div>
+                        <div class="col-7 mb-1 total-amount-wrapper">
+                            <input type="text" class="form-control fw-bold" id="totalincl" disabled
+                                :value="form.order.incl_amount" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            </div>
             <div class="mt-5">
                 <Link class="btn btn-outline-danger py-1 px-5" :href="route('home')">Cancel</Link>
                 <button type="submit" class="btn btn-primary ms-2 py-1 px-5" :disabled="form.processing">
@@ -101,12 +142,14 @@
 </template>
 
 <script>
+import HeaderComponent from '@/Components/HeaderComponent.vue';
 import InputComponent from '@/Components/InputComponent.vue';
 import SelectComponent from '@/Components/SelectComponent.vue';
 import StatusComponent from '@/Components/StatusComponent.vue';
 import TextAreaComponent from '@/Components/TextAreaComponent.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Link, useForm } from '@inertiajs/vue3';
+import Swal from 'sweetalert2';
 
 
 export default {
@@ -116,7 +159,8 @@ export default {
         TextAreaComponent,
         StatusComponent,
         Link,
-        SelectComponent
+        SelectComponent,
+        HeaderComponent
     },
     props: {
         customers: Array,
@@ -261,11 +305,48 @@ export default {
                 {
                     onSuccess: () => {
                         this.form.reset();
-                        alert(this.sales ? 'Sale updated successfully!' : 'Sale created successfully!');
+                        const Toast = Swal.mixin({
+                            toast: true,
+                            position: "top-end",
+                            showConfirmButton: false,
+                            timer: 3000,
+                            timerProgressBar: true,
+                            didOpen: (toast) => {
+                                toast.onmouseenter = Swal.stopTimer;
+                                toast.onmouseleave = Swal.resumeTimer;
+                            },
+                        });
+                        Toast.fire({
+                            icon: "success",
+                            title: "Sale Saved",
+                            text: "Sale has been saved successfully.",
+                            iconColor: "#2563eb",
+                            customClass: {
+                                timerProgressBar: "custom-timer-bar",
+                            },
+                        });
                     },
                     onError: () => {
-                        alert(this.sales ? 'There were errors while updating the sale.' : 'There were errors while creating the sale.');
-                        console.log(this.form.errors);
+                        const Toast = Swal.mixin({
+                            toast: true,
+                            position: "top-end",
+                            showConfirmButton: false,
+                            timer: 3000,
+                            timerProgressBar: true,
+                            didOpen: (toast) => {
+                                toast.onmouseenter = Swal.stopTimer;
+                                toast.onmouseleave = Swal.resumeTimer;
+                            },
+                        });
+                        Toast.fire({
+                            icon: "error",
+                            title: "Error!",
+                            text: "Something went wrong!",
+                            iconColor: "#2563eb",
+                            customClass: {
+                                timerProgressBar: "custom-timer-bar",
+                            },
+                        });
                     }
                 });
         },
@@ -274,4 +355,9 @@ export default {
 }
 </script>
 
-<style></style>
+<style scoped>
+.total-amount-wrapper input:disabled {
+    background-color: #ffffff !important;
+    opacity: 1;
+}
+</style>

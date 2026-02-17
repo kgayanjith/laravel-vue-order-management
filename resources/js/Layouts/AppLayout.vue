@@ -31,14 +31,7 @@
                             Home
                             </Link>
                         </div>
-                        <div class="nav-item text-black px-2 mb-3">
-                            <Link :href="route('sales.create')" class="nav-link p-2" v-bind:class="{
-                                active: addActiveClass(['sales.create', 'sales.edit']),
-                            }">
-                            <i class="fa-solid fa-tags"></i>
-                            Sales Orders
-                            </Link>
-                        </div>
+
                         <div class="nav-item text-black px-2 mb-3">
                             <Link :href="route('customers.index')" class="nav-link p-2" v-bind:class="{
                                 active: addActiveClass(['customers.index']),
@@ -53,6 +46,14 @@
                             }">
                             <i class="fa-brands fa-product-hunt"></i>
                             Products
+                            </Link>
+                        </div>
+                        <div class="nav-item text-black px-2 mb-3">
+                            <Link :href="route('sales.create')" class="nav-link p-2" v-bind:class="{
+                                active: addActiveClass(['sales.create', 'sales.edit']),
+                            }">
+                            <i class="fa-solid fa-tags"></i>
+                            Sales Orders
                             </Link>
                         </div>
                     </div>

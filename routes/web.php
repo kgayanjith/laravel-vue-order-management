@@ -41,5 +41,6 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified',
         Route::post('/store', [SaleController::class, 'store'])->name('sales.store');
         Route::get('/edit/{id}', [SaleController::class, 'edit'])->name('sales.edit');
         Route::post('/update', [SaleController::class, 'update'])->name('sales.update');
+        // Route::post('/delete/{id}', [SaleController::class, 'destroy'])->name('sales.destroy');
     });
 });

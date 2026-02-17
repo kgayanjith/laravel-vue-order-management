@@ -1,5 +1,6 @@
 <template>
     <AppLayout>
+        <HeaderComponent title="Product" subtitle="Create Product Record" />
         <form @submit.prevent="submit">
             <div class="row">
                 <InputComponent id="name" label="Product Name" v-model="form.name" :error="form.errors.name"
@@ -22,12 +23,14 @@
 </template>
 
 <script>
+import HeaderComponent from '@/Components/HeaderComponent.vue';
 import InputComponent from '@/Components/InputComponent.vue';
 import SelectComponent from '@/Components/SelectComponent.vue';
 import StatusComponent from '@/Components/StatusComponent.vue';
 import TextAreaComponent from '@/Components/TextAreaComponent.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Link, useForm } from '@inertiajs/vue3';
+import Swal from 'sweetalert2';
 
 
 
@@ -38,6 +41,7 @@ export default {
         TextAreaComponent,
         StatusComponent,
         Link,
+        HeaderComponent
     },
     data() {
         return {
@@ -51,17 +55,55 @@ export default {
         }
     },
     mounted() {
-       
+
     },
     methods: {
         submit() {
             this.form.post(route('products.store'), {
                 onSuccess: () => {
                     this.form.reset();
-                    alert('Product created successfully!');
+                    const Toast = Swal.mixin({
+                        toast: true,
+                        position: "top-end",
+                        showConfirmButton: false,
+                        timer: 3000,
+                        timerProgressBar: true,
+                        didOpen: (toast) => {
+                            toast.onmouseenter = Swal.stopTimer;
+                            toast.onmouseleave = Swal.resumeTimer;
+                        },
+                    });
+                    Toast.fire({
+                        icon: "success",
+                        title: "Product Saved",
+                        text: "Product has been saved successfully.",
+                        iconColor: "#2563eb",
+                        customClass: {
+                            timerProgressBar: "custom-timer-bar",
+                        },
+                    });
                 },
                 onError: () => {
-                    alert('There were errors while creating the product.');
+                    const Toast = Swal.mixin({
+                        toast: true,
+                        position: "top-end",
+                        showConfirmButton: false,
+                        timer: 3000,
+                        timerProgressBar: true,
+                        didOpen: (toast) => {
+                            toast.onmouseenter = Swal.stopTimer;
+                            toast.onmouseleave = Swal.resumeTimer;
+                        },
+                    });
+                    Toast.fire({
+                        icon: "error",
+                        title: "Error!",
+                        text: "Something went wrong!",
+                        iconColor: "#2563eb",
+                        customClass: {
+                            timerProgressBar: "custom-timer-bar",
+                        },
+                    });
                 }
             });
         }

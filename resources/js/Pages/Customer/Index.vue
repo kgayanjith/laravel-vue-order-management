@@ -1,5 +1,6 @@
 <template>
     <AppLayout>
+        <HeaderComponent title="Customers" subtitle="Manage Customers" />
         <Link class="btn btn-primary py-1 px-5" :href="route('customers.create')">Create</Link>
         <div class="table-responsive mt-3">
             <table class="table" id="customersTable">
@@ -33,6 +34,7 @@
 </template>
 
 <script>
+import HeaderComponent from '@/Components/HeaderComponent.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Link } from '@inertiajs/vue3';
 
@@ -40,7 +42,8 @@ import { Link } from '@inertiajs/vue3';
 export default {
     components: {
         AppLayout,
-        Link
+        Link,
+        HeaderComponent
     },
     props: {
         customers: Array
