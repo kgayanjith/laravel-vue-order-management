@@ -9,12 +9,12 @@ A full-stack web application built with **Laravel** and **Vue.js**, featuring au
 ### 👥 Customers
 - Create and view customer records
 - Store customer details including name, address, phone number, and postal code
-- Active/inactive status management
+- Active/inactive status 
 
 ### 📦 Products
 - Create and view product listings
 - Track product pricing and availability
-- Active/inactive status management
+- Active/inactive status 
 
 ### 🧾 Sales / Orders
 - Create and manage sales orders
