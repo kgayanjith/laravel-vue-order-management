@@ -4,6 +4,31 @@ A full-stack web application built with **Laravel** and **Vue.js**, featuring au
 
 ---
 
+## ✨ Features
+
+### 👥 Customers
+- Create and view customer records
+- Store customer details including name, address, phone number, and postal code
+- Active/inactive status management
+
+### 📦 Products
+- Create and view product listings
+- Track product pricing and availability
+- Active/inactive status management
+
+### 🧾 Sales / Orders
+- Create and manage sales orders
+- Link orders to customers and products
+- Support for invoice number, reference number, and notes
+- Tax calculation (exclusive, tax amount, inclusive)
+- Edit existing sales records
+
+### 🔐 Authentication
+- Secure login powered by Laravel Jetstream
+- Pre-filled default credentials for easy access after seeding
+
+---
+
 ## 📋 Requirements
 
 Before getting started, ensure your environment meets the following requirements:
